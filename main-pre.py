@@ -164,7 +164,7 @@ class word2vec():
         self.train_sents_num += input_sentence.__len__()
         self.train_times_num += 1
 
-    def cal_similarity(self,test_word_id_list,top_k=10):
+    def cal_similarity(self,test_word_id_list,top_k=20):
         sim_matrix = self.sess.run(self.similarity, feed_dict={self.test_word_id:test_word_id_list})
         sim_mean = np.mean(sim_matrix)
         sim_var = np.mean(np.square(sim_matrix-sim_mean))
@@ -294,7 +294,7 @@ if __name__=='__main__':
                    win_len=2,
                    learning_rate=1,
                    num_sampled=100,         # 负采样个数
-                   logdir='/tmp/280' ,
+                   logdir='/tmp/280'   ,
                    model_path='model/')     # tensorboard记录地址
                    
     data1 = '萧炎'
@@ -303,15 +303,25 @@ if __name__=='__main__':
     data4 = '长老'
     data5 = '尊者'
     data6 = '皱眉'
+    data7 = '萧战'
+    
     test_word = [ data1.encode('gbk') , data2.encode('gbk') , data3.encode('gbk') , 
-                  data4.encode('gbk') , data5.encode('gbk') , data6.encode('gbk') ]
+                  data4.encode('gbk') , data5.encode('gbk') , data6.encode('gbk'),
+                  data7.encode('gbk')   ]
     
     test_id = [word_list.index(x) for x in test_word]
-    num_steps = 100000
-    for i in range(num_steps):
-        sent = sentence_list[i%len(sentence_list)]
-        w2v.train_by_sentence([sent])
-        
-    w2v.save_model("model/")
+    test_words,near_words,sim_mean,sim_var = w2v.cal_similarity(test_id)
+    for i in range(test_words.__len__()):
+        print('test_words= {} '.format(test_words[i].decode('gbk').encode('utf-8') ))
+    for i in range(near_words.__len__()):
+        print('*********************************************')
+        print('test_words= {} '.format(test_words[i].decode('gbk').encode('utf-8') ))
+        for j in range(near_words[i].__len__()):
+            print('near_words= {} '.format(near_words[i][j].decode('gbk').encode('utf-8') ))
+
+    print(' sim_mean ={} sim_var={}'.format( sim_mean ,sim_var ))
+
+    
+     
 
 
